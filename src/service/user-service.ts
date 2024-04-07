@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
+import { v4 as uuid } from "uuid";
 import { db } from "../application/db";
 import { ResponseError } from "../error/response-error";
 import {
+  CreateLoginRequest,
   CreateUserRequest,
   UserResponse,
   toUserResponse,
@@ -37,5 +39,39 @@ export class UserService {
     });
 
     return toUserResponse(user);
+  }
+
+  static async login(request: CreateLoginRequest): Promise<UserResponse> {
+    const loginRequest = Validation.validate(UserValidation.LOGIN, request);
+
+    let user = await db.user.findUnique({
+      where: {
+        username: loginRequest.username,
+      },
+    });
+
+    if (!user) {
+      throw new ResponseError(401, "Invalid credentials");
+    }
+
+    const isMatch = await bcrypt.compare(loginRequest.password, user.password);
+
+    if (!isMatch) {
+      throw new ResponseError(401, "Invalid credentials");
+    }
+
+    user = await db.user.update({
+      where: {
+        username: loginRequest.username,
+      },
+      data: {
+        token: uuid(),
+      },
+    });
+
+    const response = toUserResponse(user);
+    response.token = user.token!;
+
+    return response;
   }
 }
