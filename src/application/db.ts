@@ -43,7 +43,7 @@ db.$on("info", (e) => {
 });
 // @ts-ignore
 db.$on("query", (e) => {
-  logger.query(e);
+  logger.info(e);
 });
 
 if (process.env.NODE_ENV !== "production") {

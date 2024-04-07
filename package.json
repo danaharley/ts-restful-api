@@ -2,9 +2,16 @@
   "name": "ts-restful-api",
   "version": "1.0.0",
   "description": "Typescript RESTful API",
-  "main": "app.ts",
+  "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --runInBand --detectOpenHandles",
+    "build": "tsc",
+    "start": "node dist/main.js"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
   },
   "author": "Dana Harliansyah",
   "license": "ISC",
