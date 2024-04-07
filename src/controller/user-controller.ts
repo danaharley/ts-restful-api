@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateLoginRequest, CreateUserRequest } from "../model/user-model";
 import { UserService } from "../service/user-service";
+import { UserRequest } from "../type/user-request";
 
 export class UserController {
   static async register(req: Request, res: Response, next: NextFunction) {
@@ -18,6 +19,16 @@ export class UserController {
     try {
       const reqBody: CreateLoginRequest = req.body as CreateLoginRequest;
       const response = await UserService.login(reqBody);
+
+      return res.status(200).json({ data: response });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async get(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const response = await UserService.get(req.user!);
 
       return res.status(200).json({ data: response });
     } catch (error) {
