@@ -104,4 +104,17 @@ export class UserService {
 
     return toUserResponse(result);
   }
+
+  static async logout(user: User): Promise<UserResponse> {
+    const result = await db.user.update({
+      where: {
+        username: user.username,
+      },
+      data: {
+        token: null,
+      },
+    });
+
+    return toUserResponse(result);
+  }
 }
