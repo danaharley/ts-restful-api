@@ -91,3 +91,55 @@ describe("GET /api/contacts/:contactId", () => {
     expect(response.body.errors).toBeDefined();
   });
 });
+
+describe("PATCH /api/contacts/:contactId", () => {
+  beforeEach(async () => {
+    await UserTest.create();
+    await ContactTest.create();
+  });
+
+  afterEach(async () => {
+    await ContactTest.deleteAll();
+    await UserTest.delete();
+  });
+
+  it("should be able to update contact", async () => {
+    const contact = await ContactTest.get();
+    const response = await supertest(web)
+      .patch(`/api/contacts/${contact.id}`)
+      .set("X-API-TOKEN", "test")
+      .send({
+        first_name: "dana",
+        last_name: "harliansyah",
+        email: "danaharley@nubicoder.com",
+        phone: "0812132",
+      });
+
+    logger.debug(response.body);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.id).toBe(contact.id);
+    expect(response.body.data.first_name).toBe("dana");
+    expect(response.body.data.last_name).toBe("harliansyah");
+    expect(response.body.data.email).toBe("danaharley@nubicoder.com");
+    expect(response.body.data.phone).toBe("0812132");
+  });
+
+  it("should be reject update contact if request invalid", async () => {
+    const contact = await ContactTest.get();
+    const response = await supertest(web)
+      .patch(`/api/contacts/${contact.id}`)
+      .set("X-API-TOKEN", "test")
+      .send({
+        first_name: "",
+        last_name: "",
+        email: "danaharley",
+        phone: "",
+      });
+
+    logger.debug(response.body);
+
+    expect(response.status).toBe(400);
+    expect(response.body.errors).toBeDefined();
+  });
+});
