@@ -36,3 +36,13 @@ export class UserTest {
     return user;
   }
 }
+
+export class ContactTest {
+  static async deleteAll() {
+    await db.contact.deleteMany({
+      where: {
+        username: "test",
+      },
+    });
+  }
+}
