@@ -48,4 +48,17 @@ export class ContactController {
       next(e);
     }
   }
+
+  static async remove(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const contactId = Number(req.params.contactId);
+      await ContactService.remove(req.user!, contactId);
+
+      return res.status(200).json({
+        data: "OK",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -72,4 +72,17 @@ export class ContactService {
 
     return toContactResponse(contact);
   }
+
+  static async remove(user: User, id: number) {
+    await this.checkContactMustExists(user.username, id);
+
+    const contact = await db.contact.delete({
+      where: {
+        id,
+        username: user.username,
+      },
+    });
+
+    return toContactResponse(contact);
+  }
 }
